@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootApplication
 public class IntroSpringDataJpaApplication {
@@ -22,40 +21,53 @@ public class IntroSpringDataJpaApplication {
 	}
 
 	@Bean
-	public CommandLineRunner testCustomerRepository() {
+	public CommandLineRunner testQueryMethodsCommand() {
 		return args -> {
 			Customer juan = new Customer();
 			juan.setName("Juan Lopez");
+			juan.setUsername("juan123");
 			juan.setPassword("juan123");
-			Customer juanPersisted = customerCrudRepository.save(juan);
-			System.out.println("Se guardó la entidad Customer: " + juanPersisted.toString());
 
 			Customer ramon = new Customer();
 			ramon.setName("Ramon Hernadez");
-			ramon.setPassword("ramon123");
+			ramon.setUsername("ramon123");
+			ramon.setPassword("juan123");
+
+			Customer ramon2 = new Customer();
+			ramon2.setName("Ramon Chavez");
+			ramon2.setUsername("ramonc123");
+			ramon2.setPassword("juanc123");
+
 			Customer luis = new Customer();
 			luis.setName("Luis Marquez");
-			luis.setPassword("luis123");
-			List<Customer> customerList = List.of(ramon, luis);
+			luis.setUsername("luism123");
+			luis.setPassword("juanm123");
+
+			Customer luis2 = new Customer();
+			luis2.setName("Luis Cañas");
+			luis2.setUsername("luisc123");
+			luis2.setPassword("juanc123");
+
+			List<Customer> customerList = List.of(juan, ramon, luis, luis2, ramon2);
 			System.out.println("Salvamos una lista de Customer");
 			customerCrudRepository.saveAll(customerList);
 
-			System.out.println("Imprimiendo todos los Customer");
-			customerCrudRepository.findAll().forEach(System.out::println);
+			System.out.println("Probando queryMethod: findByUsername");
+			customerCrudRepository.findByUsername("luism123")
+					.ifPresentOrElse(System.out::println, () -> System.out.println("Customer no encontrado"));
 
-			System.out.println("Buscando y modificando el cliente 3");
-			customerCrudRepository.findById(Long.valueOf(3)).ifPresent(c -> {
-				c.setName("Luis Chaves");
-				customerCrudRepository.save(c);
-			});
+			System.out.println("Probando queryMethod: findByNameContaining");
+			customerCrudRepository.findByNameContaining("o").forEach(System.out::println);
 
-			System.out.println("Eliminando al Customer con id 2");
-			customerCrudRepository.deleteById(Long.valueOf(2));
+			System.out.println("Probando queryMethod: findByNameStartingWith");
+			customerCrudRepository.findByNameStartingWith("ramon").forEach(System.out::println);
 
-			System.out.println("Buscando el Customer con id 2");
-			customerCrudRepository.findById(Long.valueOf(2))
-					.ifPresentOrElse(System.out::println,
-							() -> System.out.println("El customer con id 2 ya no está en la tabla"));
+			System.out.println("Probando queryMethod: findByNameEndingWith");
+			customerCrudRepository.findByNameEndingWith("ez").forEach(System.out::println);
+
+			System.out.println("Probando queryMethod: findByNameContainingAndIdGreaterThanEqualOrderByIdDesc");
+			customerCrudRepository.findByNameContainingAndIdGreaterThanEqualOrderByIdDesc("ez", Long.valueOf(3))
+					.forEach(System.out::println);
 		};
 	}
 
