@@ -68,6 +68,14 @@ public class IntroSpringDataJpaApplication {
 			System.out.println("Probando queryMethod: findByNameContainingAndIdGreaterThanEqualOrderByIdDesc");
 			customerCrudRepository.findByNameContainingAndIdGreaterThanEqualOrderByIdDesc("ez", Long.valueOf(3))
 					.forEach(System.out::println);
+
+			System.out.println("Probando @query con JPQL: getByNameAndByIdGreaterThan");
+			customerCrudRepository.getByNameAndByIdGreaterThan("ez", Long.valueOf(3))
+					.forEach(System.out::println);
+
+			System.out.println("Probando @query nativo con JPQL: getByNameAndByIdGreaterThanNative");
+			customerCrudRepository.getByNameAndByIdGreaterThanNative("ez", Long.valueOf(3))
+					.forEach(System.out::println);
 		};
 	}
 
