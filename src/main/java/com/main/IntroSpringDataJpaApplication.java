@@ -1,51 +1,47 @@
 package com.main;
 
-import jakarta.persistence.EntityManager;
+import com.main.presistence.entity.Customer;
+import com.main.presistence.repository.CustomerCrudRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class IntroSpringDataJpaApplication {
+
+	@Autowired
+	private CustomerCrudRepository customerCrudRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(IntroSpringDataJpaApplication.class, args);
 	}
 
-
 	@Bean
-	public CommandLineRunner validateDSCommand(DataSource ds) {
+	public CommandLineRunner testCustomerRepository() {
 		return args -> {
-			System.out.println("Probando conexión y DS");
-			Connection con = ds.getConnection();
-			PreparedStatement pstm = con.prepareStatement("select * from characters");
-			ResultSet rs = pstm.executeQuery();
-			while (rs.next()) {
-				String mensaje = rs.getString("id") + " - " + rs.getString("name");
-				System.out.println(mensaje);
-			}
-			rs.close();
-			pstm.close();
-			con.close();
-		};
-	}
+			Customer juan = new Customer();
+			juan.setName("Juan Lopez");
+			juan.setPassword("juan123");
+			Customer juanPersisted = customerCrudRepository.save(juan);
+			System.out.println("Se guardó la entidad Customer: " + juanPersisted.toString());
 
-	@Bean
-	public CommandLineRunner validateEntityManagerCommand(EntityManager em) {
-		return args -> {
-			System.out.println("Probando conexión y EntityManager");
-			List<Object[]> result = em.createNativeQuery("select * from characters").getResultList();
-			result.forEach(e -> {
-				String mensaje = e[0] + " - " + e[1];
-				System.out.println(mensaje);
-			});
+			System.out.println("Imprimiendo todos los Customer");
+			customerCrudRepository.findAll().forEach(System.out::println);
+
+			System.out.println("Buscando el Customer con id 1");
+			customerCrudRepository.findById(Long.valueOf(1)).ifPresent(System.out::println);
+
+			System.out.println("Eliminando al Customer con id 1");
+			customerCrudRepository.deleteById(Long.valueOf(1));
+
+			System.out.println("Buscando el Customer con id 1");
+			customerCrudRepository.findById(Long.valueOf(1))
+					.ifPresentOrElse(System.out::println,
+							() -> System.out.println("El customer con id 1 ya no está en la tabla"));
 		};
 	}
 
