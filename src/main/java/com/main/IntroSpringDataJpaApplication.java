@@ -32,7 +32,8 @@ public class IntroSpringDataJpaApplication {
 			Address juanAddress2 = new Address();
 			juanAddress2.setCountry("El Salvador");
 			juanAddress2.setAddress("Calle 654, Calle Principal Col. ABC, Tegucigalpa");
-			juan.setAddresses(List.of(juanAddress1, juanAddress2));
+			juan.addAddress(juanAddress1);
+			juan.addAddress(juanAddress2);
 
 			Customer ramon = new Customer();
 			ramon.setName("Ramon Hernadez");
@@ -41,7 +42,7 @@ public class IntroSpringDataJpaApplication {
 			Address ramonAddress = new Address();
 			ramonAddress.setCountry("El Salvador");
 			ramonAddress.setAddress("Calle 456, Calle Principal Col. X, San Salvador");
-			ramon.setAddresses(List.of(ramonAddress));
+			ramon.addAddress(ramonAddress);
 
 			Customer luis = new Customer();
 			luis.setName("Luis Marquez");
@@ -50,7 +51,7 @@ public class IntroSpringDataJpaApplication {
 			Address luisAddress = new Address();
 			luisAddress.setCountry("El Salvador");
 			luisAddress.setAddress("Calle 789, Calle Principal Col. Z, San Salvador");
-			luis.setAddresses(List.of(luisAddress));
+			luis.addAddress(luisAddress);
 
 			List<Customer> customerList = List.of(juan, ramon, luis);
 			System.out.println("Salvamos una lista de Customer");
@@ -80,13 +81,19 @@ public class IntroSpringDataJpaApplication {
 			System.out.println("Probando @query nativo con JPQL: getByNameAndByIdGreaterThanNative");
 			repository.getByNameAndByIdGreaterThanNative("ez", Long.valueOf(3))
 					.forEach(System.out::println);
+
+			System.out.println("====> Probando bideccionalidad desde Customer");
+			repository.findAll().forEach(c -> System.out.println("Cliente: "
+					+ c.getName() + ", cantidad de direciones: "
+					+ c.getAddresses().size()));
 		};
 	}
 
 	@Bean
 	public CommandLineRunner testAddressCrudRepositoryCommand(AddressCrudRepository repository) {
 		return args -> {
-			repository.findAll().forEach(System.out::println);
+			System.out.println("====> Probando bideccionalidad desde Address");
+			repository.findAll().forEach(a -> System.out.println(a +  " cliente: " + a.getCustomer().getName()));
 		};
 	}
 

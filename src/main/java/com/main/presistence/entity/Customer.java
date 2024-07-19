@@ -2,6 +2,7 @@ package com.main.presistence.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,8 +22,7 @@ public class Customer {
     @Column(name = "contrasena")
     private String password;
 
-    @OneToMany(targetEntity = Address.class, cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_cliente")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<Address> addresses;
 
     public Long getId() {
@@ -63,6 +63,16 @@ public class Customer {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public void addAddress(Address address) {
+        if (address == null) return;
+        if (addresses == null) addresses = new ArrayList<Address>();
+
+        addresses.add(address);
+
+        // para la bidireccionalidad
+        address.setCustomer(this);
     }
 
     @Override
