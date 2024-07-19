@@ -26,10 +26,13 @@ public class IntroSpringDataJpaApplication {
 			juan.setName("Juan Lopez");
 			juan.setUsername("juan123");
 			juan.setPassword("juan123");
-			Address juanAddress = new Address();
-			juanAddress.setCountry("El Salvador");
-			juanAddress.setAddress("Calle 123, Calle Principal Col. Y, San Salvador");
-			juan.setAddress(juanAddress);
+			Address juanAddress1 = new Address();
+			juanAddress1.setCountry("Honduras");
+			juanAddress1.setAddress("Calle 123, Calle Principal Col. Y, San Salvador");
+			Address juanAddress2 = new Address();
+			juanAddress2.setCountry("El Salvador");
+			juanAddress2.setAddress("Calle 654, Calle Principal Col. ABC, Tegucigalpa");
+			juan.setAddresses(List.of(juanAddress1, juanAddress2));
 
 			Customer ramon = new Customer();
 			ramon.setName("Ramon Hernadez");
@@ -38,7 +41,7 @@ public class IntroSpringDataJpaApplication {
 			Address ramonAddress = new Address();
 			ramonAddress.setCountry("El Salvador");
 			ramonAddress.setAddress("Calle 456, Calle Principal Col. X, San Salvador");
-			ramon.setAddress(ramonAddress);
+			ramon.setAddresses(List.of(ramonAddress));
 
 			Customer luis = new Customer();
 			luis.setName("Luis Marquez");
@@ -47,7 +50,7 @@ public class IntroSpringDataJpaApplication {
 			Address luisAddress = new Address();
 			luisAddress.setCountry("El Salvador");
 			luisAddress.setAddress("Calle 789, Calle Principal Col. Z, San Salvador");
-			luis.setAddress(luisAddress);
+			luis.setAddresses(List.of(luisAddress));
 
 			List<Customer> customerList = List.of(juan, ramon, luis);
 			System.out.println("Salvamos una lista de Customer");
@@ -83,7 +86,7 @@ public class IntroSpringDataJpaApplication {
 	@Bean
 	public CommandLineRunner testAddressCrudRepositoryCommand(AddressCrudRepository repository) {
 		return args -> {
-			repository.findAll().forEach(a -> System.out.println(a.getAddress() + " - " + a.getCustomer().getName()));
+			repository.findAll().forEach(System.out::println);
 		};
 	}
 
